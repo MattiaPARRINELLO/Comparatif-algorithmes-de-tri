@@ -6,6 +6,7 @@ from art import tprint
 import os
 import numpy as np
 import tabulate
+import json
 
 
 def ordinal(n: int):
@@ -716,10 +717,6 @@ def compare_algo(algo1, algo2, len_arr): #take two algorithms and return their e
 def generate_random_array(length):
     arr= list(range(length))
     return random.sample(arr, length)
-
-timetook = {}
-for i in algorithms:
-    timetook[i] = []
     
 def compare_all_algos():
     winners = {}
@@ -727,44 +724,73 @@ def compare_all_algos():
     algorithmslist = randomize_algo_list(algorithms)
 
     while len(algorithmslist) > 1:
+        global timetook
         for i in range(len(algorithmslist) - 1):
             time1, time2 = compare_algo(algorithmslist[i], algorithmslist[i + 1], 10)
-            # print("COMPARE", algorithmslist[i], "AND", algorithmslist[i + 1], end="\r", flush=True)
             if time1 < time2:
                 winners[algorithmslist[i]] = winners.get(algorithmslist[i], 0) + 1
-                timetook[algorithmslist[i]].append(time1*1000)
-                classment.append(algorithmslist[i+1])
+                timetook[algorithmslist[i]].append(time1)
             else:
                 winners[algorithmslist[i + 1]] = winners.get(algorithmslist[i + 1], 0) + 1
-                timetook[algorithmslist[i+1]].append(time2*1000)
-                classment.append(algorithmslist[i])
+                timetook[algorithmslist[i+1]].append(time2)
         algorithmslist = list(winners.keys())
         winners = {}
     # invert the classment
     return algorithmslist[0]
 
-def final_winner(itterations=10000):
+def get_file_data():
+    global timetook, totalItterations, winners
+    open("timetookData.dat", "a+")
+    open("itterationsData.dat", "a+")
+    open("winnersData.dat", "a+")
+    with open("timetookData.dat", "r") as file:
+        timetookFileContent = file.read()
+    with open("itterationsData.dat", "r") as file:
+        itterationsFileContent = file.read()
+    with open("winnersData.dat", "r") as file:
+        winnersFileContent = file.read()
+        
+    if timetookFileContent == "" or itterationsFileContent == "" or winnersFileContent == "":
+        timetook = {}
+        for algo in algorithms:
+            timetook[algo] = []
+        totalItterations = 0
+        winners = []
+    else:
+        timetook = json.loads(timetookFileContent)
+        totalItterations = int(itterationsFileContent)
+        winners = json.loads(winnersFileContent)
+
+def write_file():
+    global winners, totalItterations, timetook
+    with open("timetookData.dat", "w+") as file:
+        file.write(json.dumps(timetook))
+    with open("itterationsData.dat", "w+") as file:
+        file.write(json.dumps(totalItterations))
+    with open("winnersData.dat", "w+") as file:
+        file.write(json.dumps(winners))
+        
     
-    winners = []
+    
+def final_winner(itterations=10000):
+    global winners, totalItterations
+    totalItterations += itterations
     for i in tqdm(range(itterations)):
         winners.append(compare_all_algos())
     count = Counter(winners).most_common()
-    print(count)
     clear()
     tprint("Results")
     table = [["Place","Name", "Itterations", "Percentage", "AVG Time"]]
     for i in range(len(count)):
         avg = np.mean(timetook[count[i][0]])
-        table.append([ordinal(i+1), count[i][0], count[i][1], str(round(count[i][1]/itterations*100,2))+"%", np.format_float_positional(avg, trim='-')+"ms"])
+        table.append([ordinal(i+1), count[i][0], count[i][1], str(round(count[i][1]/totalItterations*100,2))+"%", np.format_float_positional(avg, trim='-')+"ms"])
             
     print(tabulate.tabulate(table, headers='firstrow', tablefmt='fancy_grid'))
-
-    
-    # secondmost_common = 
-    # end(most_common, Counter(winners).most_common(1)[0][1], itterations, Counter(winners).most_common(1)[0][1]/itterations*100)
-    # print("The most common algorithm is:", most_common, "with a frequency of", Counter(winners).most_common(1)[0][1], "out of", itterations, "wich represent", Counter(winners).most_common(1)[0][1]/itterations*100, "% of the time.")
+    write_file()
   
 def home():
+    get_file_data()
+    tprint('Initialisation...')
     clear()
     tprint('Algorythms Olympics')
     print("Press enter to continue")
@@ -779,14 +805,10 @@ def home():
     else:
         final_winner()
         
-def end(most_common, frequency, itt, percent):
-    tprint("Winner")
-    print('The most common algorithm is:', most_common, 'with a frequency of', frequency, 'out of', itt, 'which represent', percent, "% of the time")
-    
-    
-    
     
 home()
+# get_file_data()
+
 
 
 
