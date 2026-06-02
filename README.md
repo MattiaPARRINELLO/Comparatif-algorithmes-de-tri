@@ -20,11 +20,12 @@
 ---
 
 ## 🎯 Présentation
-Benchmark comparant 22 algorithmes de tri en format tournoi. Chaque algorithme saffronte en duel en triant des tableaux aléatoires, le plus rapide avance dans le tournoi. Statistiques détaillées : victoires, pourcentages, temps moyen.
+Benchmark comparant 22 algorithmes de tri en format tournoi. Chaque algorithme s affronte en duel en triant des tableaux aléatoires, le plus rapide avance. Statistiques détaillées : victoires, pourcentages, temps moyen.
 
 ---
 
 ## 🧮 Algorithmes
+
 | Famille | Algorithmes |
 |---------|-------------|
 | Tri par comparaison | heapsort, mergesort, quicksort, treesort, sheelsort |
@@ -36,6 +37,7 @@ Benchmark comparant 22 algorithmes de tri en format tournoi. Chaque algorithme s
 ---
 
 ## 🚀 Installation
+
 ```bash
 git clone https://github.com/MattiaPARRINELLO/Comparatif-algorithmes-de-tri.git
 cd Comparatif-algorithmes-de-tri
@@ -46,12 +48,13 @@ python main.py
 ---
 
 ## 🛠️ Technologies
+
 | Technologie | Rôle |
 |-------------|------|
 | Python 3 | Langage |
 | numpy | Calculs statistiques |
 | tqdm | Barres de progression |
-| tabulate | Tableaux格式化 |
+| tabulate | Tableaux formatés |
 
 ---
 
